@@ -1,0 +1,17 @@
+// Get balance on BSC wallet
+function GetBSCWallet(wallet) {
+  var apiKeyBSC = "YOUR API KEY";
+  var url = ("https://api.bscscan.com/api?module=account&action=balance&address="+wallet+"&apikey="+apiKeyBSC+"");
+  Logger.log(url);
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  var amount = json.result
+  var amount = amount / 1000000000000000000;
+  //Logger.log(amount);
+  return amount
+}
+
