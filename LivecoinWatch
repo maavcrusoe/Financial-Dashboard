@@ -1,0 +1,30 @@
+// Get price of some tokens not listet on CMC 
+function livecoinwatch(currency) {
+  var url = "https://api.livecoinwatch.com/coins/single"
+  var payload = {
+    'currency': 'USD',
+    'code' : currency,
+    'meta' : true,
+  };
+
+  var headers = { 
+    'x-api-key': 'YOUR API',
+    'content-type' : 'application/json'
+  };
+  var params = {
+    'method' : 'POST',
+    'headers': headers,
+    'payload': JSON.stringify(payload),
+  };
+  
+  var response = UrlFetchApp.fetch(url, params);
+  //Logger.log(response.getContentText());
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  var price = json.rate
+  //price = Math.round(price * 100) / 100
+  Logger.log(price)
+  return price
+}
+
+livecoinwatch(_MEX)
