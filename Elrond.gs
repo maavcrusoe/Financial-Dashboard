@@ -64,3 +64,38 @@ function elrondBalance(wallet) {
   var balance = balance / 1000000000000000000
   return balance
 }
+
+// balance Tokens ESDT 
+function elrondESDTbalance(wallet,esdt) {
+  var url = ("https://gateway.elrond.com/address/"+wallet+"/esdt/");
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  balance = json.data.esdts[esdt].balance
+  if  (esdt == "QWT-46ac01")
+    var balance = balance / 1000000
+  else
+    var amount = balance / 1000000000000000000
+  
+  Logger.log(balance)
+  return balance
+}
+
+//elrondESDTbalance("xxxxx","QWT-46ac01")
+
+//list all esdts 
+function elrondESDTList() {
+  var url = ("https://gateway.elrond.com/network/esdts");
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  tokens = json.data.tokens
+  Logger.log(tokens)
+  return tokens
+}
