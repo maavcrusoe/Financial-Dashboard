@@ -74,14 +74,14 @@ function elrondESDTbalance(wallet,esdt) {
   var response = UrlFetchApp.fetch(url, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
-  balance = json.data.esdts[esdt].balance
-  if  (esdt == "QWT-46ac01")
-    var balance = balance / 1000000
+  //Logger.log(json)
+  amount = json.data.esdts[esdt].balance;
+  if (esdt == "QWT-46ac01")
+    var balance = amount / 1000000;
   else
-    var amount = balance / 1000000000000000000
-  
-  Logger.log(balance)
-  return balance
+    var balance = amount / 1000000000000000000;
+  Logger.log(balance);
+  return balance;
 }
 
 //elrondESDTbalance("xxxxx","QWT-46ac01")
@@ -97,5 +97,31 @@ function elrondESDTList() {
   var json = JSON.parse(data);
   tokens = json.data.tokens
   Logger.log(tokens)
+  Logger.log(data.count())
   return tokens
+}
+
+
+//get all tokens in wallet
+function elrondTOKENSinWallet(wallet) {
+  var wallet = "erd1hcj6x53ztuh20xhyezunnfhlteukvtz8e5pd8pqt55lnvyk6wnkq3788cp";
+  var url = ("https://gateway.elrond.com/address/"+wallet+"/esdt/");
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  var tokens = json.data.esdts
+  //Logger.log(Object.keys(tokens).length);
+  var token = "";
+  var amount = "";
+  var sheet = SpreadsheetApp.getActiveSheet();
+  for (var [key, value] of Object.entries(tokens)) {
+      token += key +": " + value.balance + "\r\n"
+      amount += value.balance
+      var balance = amount / 1000000000000000000;
+      sheet.appendRow([key,value.balance]);
+  }
+  
 }
