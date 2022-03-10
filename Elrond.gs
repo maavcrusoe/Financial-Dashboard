@@ -1,19 +1,28 @@
 //https://elrondscan.com/api/wallet/api/stake?addresses[]=xxxxx
 
+//ELROND EXPLORER API
+
 //Current Amount Staking
 function elrondExplorerStake(wallet) {
-  var url = ("https://elrondscan.com/api/wallet/api/stake?addresses[]="+ wallet);
+  var url = ("https://elrondscan.com/api/wallet/api/delegation?addresses[]="+ wallet);
   var params = {
   'method': 'GET'
   };
+  var amount = 0;
+  var amountStaked = 0;
   var response = UrlFetchApp.fetch(url, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
-  //Logger.log(json)
-  var staked = json[0].userActiveStake
-  var staked = staked / 1000000000000000000
-  Logger.log(staked)
-  return staked
+  var json = json[0]
+  for(var key in json) {
+      var stakedMaiar = json[key].userActiveStake;
+      amount = parseInt(amount) + parseInt(stakedMaiar);
+      Logger.log(stakedMaiar);
+    }
+
+  amount = amount / 1000000000000000000;
+  Logger.log("claimable rewards: "+amount)
+  return amount;
 }
 
 //Current wallet balance
@@ -24,6 +33,7 @@ function elrondExplorerBalance(wallet) {
   };
   var response = UrlFetchApp.fetch(url, params);
   var d = response.getContentText();
+  Logger.log(d)
   var json = JSON.parse(d);
   var staked = json.data.account.balance
   var staked = staked / 1000000000000000000
@@ -31,8 +41,7 @@ function elrondExplorerBalance(wallet) {
   return staked
 }
 
-
-//Current Staking Rewards
+//Current Staking Rewards (no delegation)
 function elrondExplorerClaim(wallet) {
   var url = ("https://elrondscan.com/api/wallet/api/stake?addresses[]="+ wallet);
   var params = {
@@ -47,7 +56,65 @@ function elrondExplorerClaim(wallet) {
   return staked
 }
 
-//Using gateway of elrond APIs
+//Current Staking Rewards only DELEGATION
+function elrondExplorerClaimDELEGATION(wallet) {
+  var url = ("https://elrondscan.com/api/wallet/api/delegation?addresses[]="+ wallet);
+  var params = {
+  'method': 'GET'
+  };
+  var amount = 0;
+  var amountStaked = 0;
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  var json = json[0]
+  
+  for(var key in json) {
+      var staked = json[key].claimableRewards;
+      amount = parseInt(amount) + parseInt(staked);
+      Logger.log(staked);
+    }
+
+  var staked = staked / 1000000000000000000;
+  amount = amount / 1000000000000000000;
+  Logger.log("claimable rewards: "+amount)
+  return amount;
+}
+
+
+//Using gateway or ELROND APIs
+
+
+//Legacy staking rewards
+function elrondLegacyStakingRewards(wallet) {
+  var url = ("https://api.elrond.com/accounts/"+ wallet +"/delegation-legacy");
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  balance = json.claimableRewards
+  Logger.log(balance)
+  var balance = balance / 1000000000000000000
+  return balance
+}
+
+//Legacy staking 
+function elrondLegacyStaking(wallet) {
+  var url = ("https://api.elrond.com/accounts/"+ wallet +"/delegation-legacy");
+  var params = {
+  'method': 'GET'
+  };
+  var response = UrlFetchApp.fetch(url, params);
+  var data = response.getContentText();
+  var json = JSON.parse(data);
+  balance = json.userActiveStake
+  Logger.log(balance)
+  var balance = balance / 1000000000000000000
+  return balance
+}
+
 
 //Wallet Amount balance
 function elrondBalance(wallet) {
@@ -56,7 +123,6 @@ function elrondBalance(wallet) {
   'method': 'GET'
   };
   var response = UrlFetchApp.fetch(url, params);
-  //Logger.log(response.getContentText());
   var data = response.getContentText();
   var json = JSON.parse(data);
   balance = json.data.balance
@@ -74,7 +140,6 @@ function elrondESDTbalance(wallet,esdt) {
   var response = UrlFetchApp.fetch(url, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
-  //Logger.log(json)
   amount = json.data.esdts[esdt].balance;
   if (esdt == "QWT-46ac01")
     var balance = amount / 1000000;
@@ -84,7 +149,6 @@ function elrondESDTbalance(wallet,esdt) {
   return balance;
 }
 
-//elrondESDTbalance("xxxxx","QWT-46ac01")
 
 //list all esdts 
 function elrondESDTList() {
@@ -104,7 +168,6 @@ function elrondESDTList() {
 
 //get all tokens in wallet
 function elrondTOKENSinWallet(wallet) {
-  var wallet = "erd1hcj6x53ztuh20xhyezunnfhlteukvtz8e5pd8pqt55lnvyk6wnkq3788cp";
   var url = ("https://gateway.elrond.com/address/"+wallet+"/esdt/");
   var params = {
   'method': 'GET'
@@ -113,7 +176,6 @@ function elrondTOKENSinWallet(wallet) {
   var data = response.getContentText();
   var json = JSON.parse(data);
   var tokens = json.data.esdts
-  //Logger.log(Object.keys(tokens).length);
   var token = "";
   var amount = "";
   var sheet = SpreadsheetApp.getActiveSheet();
@@ -125,3 +187,6 @@ function elrondTOKENSinWallet(wallet) {
   }
   
 }
+
+
+//elrondESDTList
