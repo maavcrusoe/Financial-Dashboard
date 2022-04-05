@@ -26,20 +26,8 @@ function GetFEEDholders() {
 
 // Get Feed Pool Balance
 function GetFeedPOOLBalance(wallet, vault) {
-  //Some Smartcontracts here
-  //BNB
-  //Auto Diversify feeder finance - 0xC0947bd74Bb0E0290F3b6442ae32C89712A628E6
-  //AUTOv2 Compound belt finance - 0xe0E555ada542F4e548c285EFddE126D8F582527D
-  //AUTOv2 Compound Alpaca finance - 0x1b01D845679777789eC7466a7C2CeED745eFd899
-  //RABBIT Compound finance - 0xa74eEcDb5c9f37844211C4B8bcAEaf3Fcd6709E4
-  //BUSD 
-  //Bunny QBT - Compound Qubit finance 0x7C84EEa03E01b0a11e8d0B157eDEaC8cA3Dd6116
-  //4BELT BUSD/USDT - 0x7a95556b1c7a325bEd23fdc72bFb4D27d3098D5C
-  //ASC Strategy Channels - 0xa73b5d1ef925d1338aCD54891fc808cF43426EDc
-  //Alpaca finance - 0xa4362de99F3379B7B7d4Db2D3D4EcC6F0554693f
-  //Rabbit Autocompound - 0xDB3eFfcF2df19525354907EF6bD3cAc7D63c7D45
-  
-  var url = ("https://api-lb.feeder.finance/v1/userVault/"+wallet+"");
+  //var url = ("https://api-lb.feeder.finance/v1/userVault/"+wallet+""); OLD API
+  var url = ("https://prod-feeder-api.herokuapp.com/v1/userVault/"+wallet+"");
   //Logger.log(url);
   var params = {
   'method': 'GET'
@@ -47,11 +35,21 @@ function GetFeedPOOLBalance(wallet, vault) {
   var response = UrlFetchApp.fetch(url, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
-  var vaults = json.vaults;
-  //Logger.log(vaults[vault].balanceInToken);
-  var value = vaults[vault].balanceInToken;
-  value = Math.round(value * 100) / 100;
+
+  //Logger.log(json['vaults']);
+
+  //var value = vaults[vault].balanceInToken;
+  for(var key in json.vaults) {
+      Logger.log(key)
+      if(key.match(vault)) {
+        Logger.log(json.vaults[key].balanceInToken);
+        var value = json.vaults[key].balanceInToken;
+      } 
+
+  value = Math.round(value * 100) / 100
+  Logger.log(value)
   return value; 
+  }
 }
 
 function GetFeedAPY(wallet, vault) {
