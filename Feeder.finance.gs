@@ -53,7 +53,7 @@ function GetFeedPOOLBalance(wallet, vault) {
 }
 
 function GetFeedAPY(wallet, vault) {
-  var url = ("https://api-lb.feeder.finance/v1/userVault/"+wallet+"");
+  var url = ("https://prod-feeder-api.herokuapp.com/v1/userVault/"+wallet+"");
   //Logger.log(url);
   var params = {
   'method': 'GET'
@@ -61,8 +61,14 @@ function GetFeedAPY(wallet, vault) {
   var response = UrlFetchApp.fetch(url, params);
   var data = response.getContentText();
   var json = JSON.parse(data);
-  var vaults = json.vaults
-  //Logger.log(vaults[vault].apy);
-  var value = vaults[vault].apy * 100;
-  return value;
+  for(var key in json.vaults) {
+      Logger.log(key)
+      if(key.match(vault)) {
+        Logger.log(json.vaults[key].apy);
+        var value = json.vaults[key].apy * 100;
+      } 
+
+  Logger.log(value)
+  return value; 
+  }
 }
