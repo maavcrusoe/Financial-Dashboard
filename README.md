@@ -1,3 +1,7 @@
+> **Warning**
+> 
+> This project is going to be deprecated! 🚨
+
 # Financial-Dashboard
 Custom JavaScript functions to make a simple dashboard wiht Google SpreadSheet and track your financial portfolio usin Apps Script.
 
